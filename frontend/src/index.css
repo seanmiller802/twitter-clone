@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    @apply bg-x-black text-x-gray-50 font-sans m-0;
+    -webkit-font-smoothing: antialiased;
+  }
+  a {
+    @apply no-underline text-inherit;
+  }
+}
+
+/* X.com scrollbar style */
+::-webkit-scrollbar {
+  width: 0px;
+}
+
+/* Thin scrollbar for non-webkit */
+html {
+  scrollbar-width: none;
+}
