@@ -7,24 +7,21 @@ A full-stack social media application built as a monorepo with a **NestJS GraphQ
 ### Prerequisites
 
 - **Node.js** 18+
-- **PostgreSQL** — either local (via Docker) or hosted (Neon, Supabase, etc.)
 
 ### Setup
 
 ```bash
 # Clone the repo
-git clone <repo-url>
-cd twitter-clone-monorepo
+git clone https://github.com/seanmiller802/twitter-clone.git
+cd twitter-clone
 
 # Install dependencies for both backend and frontend
 cd backend && npm install
 cd ../frontend && npm install
 cd ..
-
-# Configure the backend environment
-cp backend/.env.example backend/.env
-# Edit backend/.env with your DATABASE_URL and JWT_SECRET
 ```
+
+The backend `.env` is pre-configured with a hosted Neon PostgreSQL connection string and JWT secret. In a production environment, credentials would never be committed to source control.
 
 ### Running
 
@@ -41,24 +38,6 @@ cd backend && npm run seed
 
 Open **http://localhost:5173** to use the app.
 The GraphQL Playground is available at **http://localhost:3000/graphql**.
-
-### Environment Variables
-
-Create `backend/.env` with:
-
-```env
-DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
-JWT_SECRET=your-random-secret-key
-JWT_EXPIRATION=7d
-```
-
-For local Postgres via Docker:
-
-```bash
-cd backend && docker-compose up -d
-```
-
-Then use `DATABASE_URL=postgresql://postgres:postgres@localhost:5432/twitter_clone`.
 
 ## Architecture
 
@@ -84,7 +63,7 @@ The app follows a clean separation between a GraphQL API backend and a React SPA
 └──────────┬──────────────────────┘
            │
 ┌──────────▼──────────────────────┐
-│        PostgreSQL               │
+│     PostgreSQL (Neon)           │
 │  users, tweets, likes tables    │
 └─────────────────────────────────┘
 ```
@@ -146,7 +125,7 @@ The Apollo client uses a **split link**: HTTP for queries/mutations (with JWT in
 ## Project Structure
 
 ```
-twitter-clone-monorepo/
+twitter-clone/
 ├── package.json                    # Root scripts (install:all, backend, frontend, seed)
 ├── README.md
 │
@@ -154,8 +133,7 @@ twitter-clone-monorepo/
 │   ├── package.json
 │   ├── nest-cli.json
 │   ├── tsconfig.json
-│   ├── docker-compose.yml          # Local Postgres container
-│   ├── .env.example
+│   ├── .env                        # Pre-configured Neon DB + JWT secret
 │   └── src/
 │       ├── main.ts                 # App bootstrap, ValidationPipe, CORS
 │       ├── app.module.ts           # Root module — DB, GraphQL, feature modules
@@ -245,9 +223,9 @@ twitter-clone-monorepo/
 
 - **Generated avatars** — User avatars are generated via [DiceBear](https://dicebear.com) using the "Notionists" style. Each username produces a unique, consistent illustrated avatar with no setup required.
 
-- **X.com-style URL structure** — Tweet detail pages use the pattern `/:username/status/:id`, matching X.com's URL format (e.g., `/alice/status/abc-123`).
+- **X.com-style URL structure** — Tweet detail pages use the pattern `/:username/status/:id`, matching X.com's URL format.
 
-- **Seed script with realistic data** — The seed generates 10 users, 1000 tweets (from mix-and-match templates), ~300 replies, and ~2500 likes with staggered timestamps spanning ~33 hours. Provides a realistic feed for demo purposes.
+- **Seed script with realistic data** — The seed generates 10 users, 1000 tweets (from mix-and-match templates), ~300 replies, and ~2500 likes with staggered timestamps spanning ~33 hours.
 
 ## GraphQL API Reference
 
@@ -282,7 +260,7 @@ twitter-clone-monorepo/
 
 ## Demo Accounts
 
-After running the seed script:
+After running the seed script (`cd backend && npm run seed`):
 
 | Username | Email | Password |
 |----------|-------|----------|
@@ -305,7 +283,7 @@ After running the seed script:
 | Language | TypeScript 5 |
 | API | GraphQL (code-first) via Apollo Server |
 | ORM | TypeORM |
-| Database | PostgreSQL |
+| Database | PostgreSQL (Neon) |
 | Auth | Passport + JWT + bcrypt |
 | Real-time | GraphQL Subscriptions (graphql-ws) |
 | Frontend | React 18 |
